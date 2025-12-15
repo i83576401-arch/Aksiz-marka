@@ -414,10 +414,42 @@
             </div>
         </div>
         <div class="topbar-right">
-            <div class="topbar-role" id="topbar-role">Rol tanlanmagan</div>
-            <div id="topbar-user" style="opacity:0.85;font-size:11px;">Foydalanuvchi aniqlanmagan</div>
+    <!-- Foydalanuvchi badge (avatar + rol + ism/STIR) -->
+    <button id="user-badge" class="user-badge hidden" type="button">
+        <div class="user-badge-avatar" id="user-avatar-circle">U</div>
+        <div class="user-badge-text">
+            <div class="user-badge-role" id="topbar-role">Rol tanlanmagan</div>
+            <div class="user-badge-name" id="topbar-user">Foydalanuvchi aniqlanmagan</div>
+        </div>
+        <div class="user-badge-caret">▾</div>
+    </button>
+
+    <!-- Ochiladigan menyu -->
+    <div id="user-dropdown" class="user-dropdown hidden">
+        <div class="user-dropdown-header">
+            <div class="user-dropdown-avatar" id="user-dropdown-avatar">U</div>
+            <div>
+                <div class="user-dropdown-name" id="user-dropdown-name">Foydalanuvchi</div>
+                <div class="user-dropdown-role" id="user-dropdown-role">Rol tanlanmagan</div>
+            </div>
+        </div>
+        <div class="user-dropdown-body">
+            <div class="user-dropdown-row">
+                <span>STIR:</span>
+                <span id="user-dropdown-inn">—</span>
+            </div>
+            <div class="user-dropdown-row">
+                <span>Kabinet:</span>
+                <span id="user-dropdown-kabinet">—</span>
+            </div>
+        </div>
+        <div class="user-dropdown-footer">
+            <button type="button" id="logout-btn-dropdown" class="btn btn-ghost btn-small" style="width:100%;">
+                Chiqish
+            </button>
         </div>
     </div>
+</div>
 
     <div class="wrapper">
         <!-- LOGIN -->
@@ -1571,3 +1603,4 @@
 </script>
 </body>
 </html>
+

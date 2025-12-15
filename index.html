@@ -90,9 +90,10 @@
         }
 
         .topbar-right {
-            font-size: 12px;
-            text-align:right;
-        }
+    position: relative;
+    font-size: 12px;
+    text-align: right;
+}
 
         .topbar-role {
             font-weight: 600;
@@ -345,6 +346,22 @@
             align-items:center;
             gap:8px;
         }
+// Foydalanuvchi badge'ni bosganda menyuni ochib-yopish
+userBadge.addEventListener("click", (e) => {
+    e.stopPropagation(); // tashqariga chiqmasin
+    userDropdown.classList.toggle("hidden");
+});
+
+// Sahifaning boshqa joyini bossang – dropdown yopilsin
+document.addEventListener("click", (e) => {
+    if (userDropdown.classList.contains("hidden")) return;
+
+    const isInsideMenu = userDropdown.contains(e.target);
+    const isOnBadge = userBadge.contains(e.target);
+    if (!isInsideMenu && !isOnBadge) {
+        userDropdown.classList.add("hidden");
+    }
+});
 
         .detail-grid {
             display:grid;
@@ -397,6 +414,126 @@
                 grid-template-columns: minmax(0,1fr);
             }
         }
+.user-badge {
+    border: none;
+    background: rgba(15,23,42,0.9);
+    color: #e5e7eb;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 0 0 1px rgba(148,163,184,0.4);
+    transition: background 0.15s, box-shadow 0.15s, transform 0.05s;
+}
+.user-badge:hover {
+    background: rgba(15,23,42,1);
+    box-shadow: 0 0 0 1px rgba(191,219,254,0.7);
+}
+.user-badge:active {
+    transform: scale(0.98);
+}
+
+.user-badge-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #eff6ff;
+}
+.user-badge-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.user-badge-role {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.9;
+}
+.user-badge-name {
+    font-size: 11px;
+    opacity: 0.85;
+    max-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.user-badge-caret {
+    font-size: 10px;
+    opacity: 0.8;
+}
+
+/* Ochiladigan profil menyu */
+.user-dropdown {
+    position: absolute;
+    right: 0;
+    top: 46px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 18px 40px rgba(15,23,42,0.4);
+    border: 1px solid rgba(148,163,184,0.45);
+    width: 260px;
+    z-index: 40;
+}
+.user-dropdown-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.user-dropdown-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #eff6ff;
+}
+.user-dropdown-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+}
+.user-dropdown-role {
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.user-dropdown-body {
+    padding: 8px 12px;
+    font-size: 12px;
+}
+.user-dropdown-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+.user-dropdown-row span:first-child {
+    color: #6b7280;
+}
+.user-dropdown-row span:last-child {
+    font-weight: 500;
+    color: #111827;
+}
+
+.user-dropdown-footer {
+    padding: 8px 12px 10px;
+    border-top: 1px solid #e5e7eb;
+}
     </style>
 </head>
 <body>
@@ -1034,6 +1171,15 @@
     const reportContent = $("report-content");
     const topbarRole = $("topbar-role");
     const topbarUser = $("topbar-user");
+    const userBadge = $("user-badge");
+    const userDropdown = $("user-dropdown");
+    const userAvatarCircle = $("user-avatar-circle");
+    const userDropdownAvatar = $("user-dropdown-avatar");
+    const userDropdownName = $("user-dropdown-name");
+    const userDropdownRole = $("user-dropdown-role");
+    const userDropdownInn = $("user-dropdown-inn");
+    const userDropdownKabinet = $("user-dropdown-kabinet");
+    const logoutBtnDropdown = $("logout-btn-dropdown");
 
     loginForm.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -1042,6 +1188,16 @@
         const nameVal = $("login-name").value.trim() || "Foydalanuvchi";
 
         currentRole = roleVal;
+         ...
+    appTitle.textContent = roleTitle + " kabineti";
+    appSubtitle.textContent = ...
+    currentRole === "tadbirkor"
+            ? `${currentInn} – ${currentName} (Tadbirkor)`
+            : `${roleTitle} – ${currentName}`;
+
+    // Foydalanuvchi badge + dropdown ma'lumotlarini yangilash
+    updateUserUI();
+});
 
         if (roleVal === "tadbirkor") {
             if (!innVal) {
@@ -1083,19 +1239,64 @@
 
         renderOrdersForCurrent();
     });
+function initialsFromName(name) {
+    if (!name) return "U";
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+}
 
-    logoutBtn.addEventListener("click", () => {
-        currentInn = null;
-        currentName = null;
-        currentRole = "tadbirkor";
-        $("login-inn").value = "";
-        $("login-name").value = "";
-        $("login-role").value = "tadbirkor";
-        topbarRole.textContent = "Rol tanlanmagan";
-        topbarUser.textContent = "Foydalanuvchi aniqlanmagan";
-        appCard.classList.add("hidden");
-        loginCard.classList.remove("hidden");
-    });
+function updateUserUI() {
+    const roleTitle = ROLE_LABELS[currentRole] || "Kabinet";
+    const kabinetTitle = roleTitle + " kabineti";
+
+    let nameShort = "";
+    if (currentRole === "tadbirkor" && currentInn) {
+        nameShort = currentInn + " · " + (currentName || "");
+    } else {
+        nameShort = currentName || roleTitle;
+    }
+
+    // Badge ichidagi matn
+    topbarRole.textContent = roleTitle;
+    topbarUser.textContent = nameShort;
+
+    // Dropdown ichidagi ma'lumotlar
+    userDropdownName.textContent = currentName || "Foydalanuvchi";
+    userDropdownRole.textContent = roleTitle;
+    userDropdownInn.textContent = currentInn || "—";
+    userDropdownKabinet.textContent = kabinetTitle;
+
+    // Inicial (avatar uchun)
+    const initials = initialsFromName(currentName || currentInn || "U");
+    userAvatarCircle.textContent = initials;
+    userDropdownAvatar.textContent = initials;
+
+    // Badge ni ko‘rsatish
+    userBadge.classList.remove("hidden");
+}
+    function doLogout() {
+    currentInn = null;
+    currentName = null;
+    currentRole = "tadbirkor";
+
+    $("login-inn").value = "";
+    $("login-name").value = "";
+    $("login-role").value = "tadbirkor";
+
+    appCard.classList.add("hidden");
+    loginCard.classList.remove("hidden");
+
+    // Topbarda foydalanuvchi ma'lumotlarini tozalash va yashirish
+    topbarRole.textContent = "Rol tanlanmagan";
+    topbarUser.textContent = "Foydalanuvchi aniqlanmagan";
+    userBadge.classList.add("hidden");
+    userDropdown.classList.add("hidden");
+}
+
+logoutBtn.addEventListener("click", doLogout);
+logoutBtnDropdown.addEventListener("click", doLogout);
+
 
     // --- Yangi buyurtma (faqat Tadbirkor) ---
     const orderForm = $("order-form");
@@ -1603,4 +1804,5 @@
 </script>
 </body>
 </html>
+
 

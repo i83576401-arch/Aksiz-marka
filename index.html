@@ -2,12 +2,15 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8" />
-    <title>Aksiz markalari – bojxona portali (localStorage demo)</title>
+    <title>Aksiz markalari – bojxona portali (demo)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
         :root {
-            --bg-gradient-top: #0f172a;
-            --bg-gradient-bottom: #1f2937;
+            --header-bg: #ffffff;
+            --header-text: #111827;
+            --header-border: #16a34a;
+            --bg-body-left: #020617;
+            --bg-body-right: #1d4ed8;
             --card-bg: #ffffff;
             --accent: #2563eb;
             --accent-soft: #dbeafe;
@@ -23,8 +26,8 @@
 
         body {
             margin: 0;
-            font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-            background: radial-gradient(circle at top left, #111827, #020617 60%);
+            font-family: system-ui,-apple-system,"Segoe UI",sans-serif;
+            background: linear-gradient(120deg, var(--bg-body-left) 0%, #0f172a 35%, var(--bg-body-right) 100%);
             color: var(--text-main);
         }
 
@@ -36,14 +39,24 @@
             flex-direction: column;
         }
 
+        /* HEADER – bojxona saytiga o‘xshash */
         .topbar {
-            display: flex;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: var(--header-bg);
+            color: var(--header-text);
+            border-bottom: 3px solid var(--header-border);
+            box-shadow: 0 1px 4px rgba(15,23,42,0.12);
+        }
+        .topbar-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 8px 16px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 12px;
             align-items: center;
-            justify-content: space-between;
-            padding: 10px 16px;
-            background: linear-gradient(90deg, #0f172a, #1d4ed8);
-            color: #e5e7eb;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.25);
         }
 
         .topbar-left {
@@ -53,52 +66,232 @@
         }
 
         .logo-circle {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 999px;
-            background: rgba(15,23,42,0.85);
+            background: #f4f4f5;
             display:flex;
             align-items:center;
             justify-content:center;
             overflow: hidden;
+            box-shadow: 0 0 0 1px rgba(148,163,184,0.5);
         }
-
         .logo-circle img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
         .logo-fallback {
             font-size: 18px;
             font-weight: 700;
+            color:#16a34a;
         }
 
-        .topbar-title {
+        .topbar-title-block {
             display:flex;
             flex-direction:column;
         }
-
-        .topbar-title span:first-child {
-            font-size: 14px;
+        .topbar-title-main {
+            font-size: 12px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.04em;
         }
-        .topbar-title span:last-child {
-            font-size: 13px;
-            opacity: 0.85;
+        .topbar-title-sub {
+            font-size: 11px;
+            color:#4b5563;
+        }
+
+        .topbar-nav {
+            display:flex;
+            justify-content:center;
+            gap:20px;
+            font-size:12px;
+        }
+        .topbar-nav a {
+            text-decoration:none;
+            color:#111827;
+            text-transform:uppercase;
+            letter-spacing:0.06em;
+            font-weight:500;
+            padding:4px 0;
+            border-bottom:2px solid transparent;
+        }
+        .topbar-nav a:hover {
+            border-bottom-color:#16a34a;
         }
 
         .topbar-right {
-    position: relative;
-    font-size: 12px;
-    text-align: right;
-}
-
-        .topbar-role {
-            font-weight: 600;
+            position: relative;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            justify-content:flex-end;
         }
 
+        .hotline {
+            display:flex;
+            align-items:center;
+            gap:4px;
+            font-size:12px;
+            font-weight:600;
+            color:#16a34a;
+        }
+        .hotline-icon {
+            width:20px;
+            height:20px;
+            border-radius:999px;
+            border:1px solid #16a34a;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:12px;
+        }
+
+        .header-login-btn {
+            border-radius:999px;
+            padding:6px 12px;
+            font-size:11px;
+            text-transform:uppercase;
+            letter-spacing:0.08em;
+            border:1px solid #0f172a;
+            background:#0f172a;
+            color:#f9fafb;
+            cursor:pointer;
+        }
+        .header-login-btn:hover {
+            background:#16a34a;
+            border-color:#16a34a;
+        }
+
+        .lang-pill {
+            font-size:11px;
+            padding:4px 8px;
+            border-radius:999px;
+            border:1px solid #d1d5db;
+            background:#f9fafb;
+            cursor:default;
+        }
+
+        /* USER BADGE + DROPDOWN (login bo‘lganda) */
+        .user-badge {
+            border: none;
+            background: #0f172a;
+            color: #e5e7eb;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+            box-shadow: 0 0 0 1px rgba(148,163,184,0.4);
+            transition: background 0.15s, box-shadow 0.15s, transform 0.05s;
+        }
+        .user-badge:hover {
+            background: #111827;
+            box-shadow: 0 0 0 1px rgba(22,163,74,0.8);
+        }
+        .user-badge:active {
+            transform: scale(0.98);
+        }
+        .user-badge-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #eff6ff;
+        }
+        .user-badge-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .user-badge-role {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            opacity: 0.9;
+        }
+        .user-badge-name {
+            font-size: 11px;
+            opacity: 0.85;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .user-badge-caret {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            right: 0;
+            top: 46px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 18px 40px rgba(15,23,42,0.4);
+            border: 1px solid rgba(148,163,184,0.45);
+            width: 260px;
+            z-index: 40;
+        }
+        .user-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .user-dropdown-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #eff6ff;
+        }
+        .user-dropdown-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #111827;
+        }
+        .user-dropdown-role {
+            font-size: 11px;
+            color: #6b7280;
+        }
+        .user-dropdown-body {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+        .user-dropdown-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+        .user-dropdown-row span:first-child {
+            color: #6b7280;
+        }
+        .user-dropdown-row span:last-child {
+            font-weight: 500;
+            color: #111827;
+        }
+        .user-dropdown-footer {
+            padding: 8px 12px 10px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* ASOSIY LAYOUT */
         .wrapper {
             max-width: 1180px;
             width: 100%;
@@ -106,495 +299,409 @@
             padding: 18px 12px 40px;
         }
 
+        .hero-strip {
+            display:flex;
+            align-items:center;
+            gap:10px;
+            color:#e5e7eb;
+            font-size:13px;
+            margin-top:10px;
+            margin-bottom:10px;
+        }
+        .hero-strip-logo {
+            width:34px;
+            height:34px;
+            border-radius:999px;
+            overflow:hidden;
+            border:1px solid rgba(148,163,184,0.7);
+            background:#020617;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+        .hero-strip-logo img {
+            width:100%;height:100%;object-fit:cover;
+        }
+        .hero-strip-text-main {
+            font-weight:600;
+            letter-spacing:0.03em;
+            text-transform:uppercase;
+        }
+        .hero-strip-text-sub {
+            font-size:12px;
+            color:#cbd5f5;
+        }
+
         .grid-main {
             display:grid;
             grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-            gap: 16px;
+            gap:16px;
         }
 
         .card {
             background: var(--card-bg);
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 16px 18px;
-            border: 1px solid rgba(148,163,184,0.35);
-            box-shadow:
-                0 16px 40px rgba(15,23,42,0.30),
-                0 0 0 1px rgba(148,163,184,0.30);
+            border: 1px solid rgba(148,163,184,0.5);
+            box-shadow: 0 18px 40px rgba(15,23,42,0.40);
             margin-bottom: 16px;
         }
 
         .card-soft {
-            border-radius: 16px;
+            border-radius: 18px;
             padding: 14px 16px;
             border: 1px solid rgba(148,163,184,0.25);
             background: radial-gradient(circle at top left, #eff6ff, #ffffff);
         }
 
-        h1, h2, h3, h4 {
-            margin: 4px 0 8px;
-        }
-
-        h1 { font-size: 22px; }
-        h2 { font-size: 18px; }
-        h3 { font-size: 15px; }
-        h4 { font-size: 14px; }
+        h1,h2,h3,h4 { margin:4px 0 8px; }
+        h1 { font-size:22px; }
+        h2 { font-size:18px; }
+        h3 { font-size:15px; }
+        h4 { font-size:14px; }
 
         .muted {
-            font-size: 13px;
-            color: var(--text-muted);
+            font-size:13px;
+            color:var(--text-muted);
         }
 
         label {
-            display: block;
-            font-size: 12px;
-            margin-bottom: 3px;
-            color: #374151;
+            display:block;
+            font-size:12px;
+            margin-bottom:3px;
+            color:#374151;
         }
 
-        input, select, textarea {
-            width: 100%;
-            padding: 7px 8px;
-            border-radius: 8px;
-            border: 1px solid var(--border-subtle);
-            font-size: 13px;
+        input,select,textarea {
+            width:100%;
+            padding:7px 8px;
+            border-radius:10px;
+            border:1px solid var(--border-subtle);
+            font-size:13px;
             background:#f9fafb;
         }
-
         textarea {
-            min-height: 70px;
-            resize: vertical;
+            min-height:70px;
+            resize:vertical;
         }
 
-        input:focus, select:focus, textarea:focus {
-            outline: 2px solid var(--accent-soft);
-            border-color: var(--accent);
+        input:focus,select:focus,textarea:focus {
+            outline:2px solid var(--accent-soft);
+            border-color:var(--accent);
             background:#ffffff;
         }
 
         .row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
         }
-
         .col-2 {
-            flex: 1 1 220px;
+            flex:1 1 220px;
         }
 
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 7px 14px;
-            border-radius: 999px;
-            border: none;
-            cursor: pointer;
-            font-size: 13px;
-            gap: 6px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding:7px 14px;
+            border-radius:999px;
+            border:none;
+            cursor:pointer;
+            font-size:13px;
+            gap:6px;
         }
-
         .btn-primary {
-            background: var(--accent);
-            color: #fff;
+            background:var(--accent);
+            color:#fff;
         }
-
         .btn-primary:hover {
-            background: var(--accent-strong);
+            background:var(--accent-strong);
         }
-
         .btn-ghost {
-            background: transparent;
-            color: #111827;
+            background:transparent;
+            color:#111827;
         }
-
         .btn-ghost:hover {
             background:#e5e7eb;
         }
-
         .btn-small {
-            padding: 4px 8px;
-            font-size: 12px;
+            padding:4px 8px;
+            font-size:12px;
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12.5px;
+            width:100%;
+            border-collapse:collapse;
+            font-size:12.5px;
         }
-        th, td {
-            padding: 7px 6px;
-            border-bottom: 1px solid var(--border-subtle);
-            text-align: left;
+        th,td {
+            padding:7px 6px;
+            border-bottom:1px solid var(--border-subtle);
+            text-align:left;
         }
         th {
-            font-size: 11px;
-            text-transform: uppercase;
-            color: var(--text-muted);
+            font-size:11px;
+            text-transform:uppercase;
+            color:var(--text-muted);
         }
-        tr:nth-child(even) td {
-            background:#f9fafb;
-        }
-        tr:hover td {
-            background: #eff6ff;
-        }
+        tr:nth-child(even) td { background:#f9fafb; }
+        tr:hover td { background:#eff6ff; }
 
         .badge {
             padding: 2px 7px;
             border-radius: 999px;
             font-size: 11px;
-            display: inline-block;
+            display:inline-block;
         }
-        .badge-new { background:#e0f2fe; color:#0369a1; }
-        .badge-review { background:#e5e7eb; color:#374151; }
-        .badge-approved { background:#dcfce7; color:#166534; }
-        .badge-rejected { background:#fee2e2; color:#b91c1c; }
-        .badge-bank { background:#fef3c7; color:#92400e; }
+        .badge-new { background:#e0f2fe;color:#0369a1; }
+        .badge-review { background:#e5e7eb;color:#374151; }
+        .badge-approved { background:#dcfce7;color:#166534; }
+        .badge-rejected { background:#fee2e2;color:#b91c1c; }
+        .badge-bank { background:#fef3c7;color:#92400e; }
 
         .error-msg { color:var(--danger); font-size:12px; margin-left:8px; }
         .ok-msg { color:var(--success); font-size:12px; margin-left:8px; }
 
         .section-title {
-            margin-top: 10px;
-            margin-bottom: 6px;
-            font-size: 13px;
-            font-weight: 600;
+            margin-top:10px;
+            margin-bottom:6px;
+            font-size:13px;
+            font-weight:600;
             color:#1f2937;
         }
 
-        /* LOGIN CARD markazda */
+        /* LOGIN CARD */
         #login-card {
-            max-width: 520px;
-            margin: 40px auto;
+            max-width:620px;
+            margin:18px auto;
             background: radial-gradient(circle at top left, #1d4ed8 0%, #020617 70%);
             color:#e5e7eb;
-            border-radius: 18px;
-            border: 1px solid rgba(148,163,184,0.45);
+            border-radius:20px;
+            border:1px solid rgba(148,163,184,0.5);
         }
-
         #login-card h1 { color:#f9fafb; }
         #login-card input,
         #login-card select {
-            background: rgba(15,23,42,0.85);
+            background:rgba(15,23,42,0.85);
             color:#e5e7eb;
             border-color:#334155;
         }
-        #login-card input::placeholder {
-            color:#9ca3af;
-        }
-        #login-card label {
-            color:#cbd5f5;
-        }
+        #login-card input::placeholder { color:#9ca3af; }
+        #login-card label { color:#cbd5f5; }
 
-        /* HISOBOT blokidagi kichik jadval */
-        .report-block {
-            font-size: 13px;
-        }
-        .report-block p {
-            margin: 2px 0;
-        }
+        .report-block { font-size:13px; }
+        .report-block p { margin:2px 0; }
         .report-block ul {
-            margin: 4px 0 0;
-            padding-left: 18px;
+            margin:4px 0 0;
+            padding-left:18px;
         }
-        .report-block li {
-            margin: 1px 0;
-        }
+        .report-block li { margin:1px 0; }
 
-        /* MODAL – murojaat tafsilotlari & imzo */
+        /* MODAL */
         .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(15,23,42,0.55);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
+            position:fixed;
+            inset:0;
+            background:rgba(15,23,42,0.55);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            z-index:50;
         }
-
         .modal {
             background:#ffffff;
-            border-radius: 18px;
-            max-width: 880px;
-            width: 100%;
-            max-height: 90vh;
-            overflow: hidden;
-            border: 1px solid rgba(148,163,184,0.4);
-            box-shadow: 0 20px 50px rgba(15,23,42,0.45);
+            border-radius:18px;
+            max-width:880px;
+            width:100%;
+            max-height:90vh;
+            overflow:hidden;
+            border:1px solid rgba(148,163,184,0.4);
+            box-shadow:0 20px 50px rgba(15,23,42,0.45);
             display:flex;
             flex-direction:column;
         }
-
         .modal-header {
-            padding: 10px 16px;
+            padding:10px 16px;
             border-bottom:1px solid #e5e7eb;
             display:flex;
             align-items:center;
             justify-content:space-between;
         }
-        .modal-header h3 {
-            margin:0;
-        }
         .modal-body {
-            padding: 10px 16px 14px;
+            padding:10px 16px 14px;
             overflow-y:auto;
         }
         .modal-footer {
-            padding: 10px 16px;
+            padding:10px 16px;
             border-top:1px solid #e5e7eb;
             display:flex;
             justify-content:space-between;
             align-items:center;
             gap:8px;
         }
-// Foydalanuvchi badge'ni bosganda menyuni ochib-yopish
-userBadge.addEventListener("click", (e) => {
-    e.stopPropagation(); // tashqariga chiqmasin
-    userDropdown.classList.toggle("hidden");
-});
-
-// Sahifaning boshqa joyini bossang – dropdown yopilsin
-document.addEventListener("click", (e) => {
-    if (userDropdown.classList.contains("hidden")) return;
-
-    const isInsideMenu = userDropdown.contains(e.target);
-    const isOnBadge = userBadge.contains(e.target);
-    if (!isInsideMenu && !isOnBadge) {
-        userDropdown.classList.add("hidden");
-    }
-});
-
         .detail-grid {
             display:grid;
-            grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+            grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);
             gap:12px;
-            font-size: 13px;
+            font-size:13px;
         }
-
         .detail-block {
-            border-radius: 12px;
+            border-radius:12px;
             border:1px solid #e5e7eb;
             padding:8px 10px;
             background:#f9fafb;
         }
-
         .detail-row {
             display:flex;
             justify-content:space-between;
             gap:8px;
             margin-bottom:2px;
         }
-        .detail-label {
-            color:#6b7280;
-        }
-        .detail-value {
-            font-weight:500;
-        }
+        .detail-label { color:#6b7280; }
+        .detail-value { font-weight:500; }
 
         .sign-item {
             border-bottom:1px dashed #e5e7eb;
             padding:4px 0;
             font-size:12px;
         }
-        .sign-item:last-child {
-            border-bottom:none;
-        }
-        .sign-role {
-            font-weight:600;
-        }
+        .sign-item:last-child { border-bottom:none; }
+        .sign-role { font-weight:600; }
         .sign-meta {
             color:#6b7280;
             font-size:11px;
         }
 
-        @media (max-width: 900px) {
-            .grid-main {
-                grid-template-columns: minmax(0, 1fr);
+        @media (max-width: 1024px) {
+            .topbar-inner {
+                grid-template-columns: auto 1fr;
+                grid-template-rows: auto auto;
             }
-            .detail-grid {
-                grid-template-columns: minmax(0,1fr);
+            .topbar-nav {
+                grid-column: 1 / span 2;
+                justify-content:flex-start;
+                flex-wrap:wrap;
+                gap:12px;
             }
         }
-.user-badge {
-    border: none;
-    background: rgba(15,23,42,0.9);
-    color: #e5e7eb;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 10px;
-    border-radius: 999px;
-    cursor: pointer;
-    box-shadow: 0 0 0 1px rgba(148,163,184,0.4);
-    transition: background 0.15s, box-shadow 0.15s, transform 0.05s;
-}
-.user-badge:hover {
-    background: rgba(15,23,42,1);
-    box-shadow: 0 0 0 1px rgba(191,219,254,0.7);
-}
-.user-badge:active {
-    transform: scale(0.98);
-}
-
-.user-badge-avatar {
-    width: 26px;
-    height: 26px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #1d4ed8, #3b82f6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 700;
-    color: #eff6ff;
-}
-.user-badge-text {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-.user-badge-role {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    opacity: 0.9;
-}
-.user-badge-name {
-    font-size: 11px;
-    opacity: 0.85;
-    max-width: 160px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.user-badge-caret {
-    font-size: 10px;
-    opacity: 0.8;
-}
-
-/* Ochiladigan profil menyu */
-.user-dropdown {
-    position: absolute;
-    right: 0;
-    top: 46px;
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 18px 40px rgba(15,23,42,0.4);
-    border: 1px solid rgba(148,163,184,0.45);
-    width: 260px;
-    z-index: 40;
-}
-.user-dropdown-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px 8px;
-    border-bottom: 1px solid #e5e7eb;
-}
-.user-dropdown-avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #1d4ed8, #3b82f6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 700;
-    color: #eff6ff;
-}
-.user-dropdown-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: #111827;
-}
-.user-dropdown-role {
-    font-size: 11px;
-    color: #6b7280;
-}
-
-.user-dropdown-body {
-    padding: 8px 12px;
-    font-size: 12px;
-}
-.user-dropdown-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 6px;
-    margin-bottom: 4px;
-}
-.user-dropdown-row span:first-child {
-    color: #6b7280;
-}
-.user-dropdown-row span:last-child {
-    font-weight: 500;
-    color: #111827;
-}
-
-.user-dropdown-footer {
-    padding: 8px 12px 10px;
-    border-top: 1px solid #e5e7eb;
-}
+        @media (max-width: 900px) {
+            .grid-main {
+                grid-template-columns:minmax(0,1fr);
+            }
+            .detail-grid {
+                grid-template-columns:minmax(0,1fr);
+            }
+        }
+        @media (max-width: 640px) {
+            .topbar-inner {
+                grid-template-columns:1fr;
+                grid-template-rows:auto auto auto;
+            }
+            .topbar-right {
+                justify-content:flex-start;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="layout">
-    <!-- TOPBAR -->
+    <!-- HEADER -->
     <div class="topbar">
-        <div class="topbar-left">
-            <div class="logo-circle">
-                <!-- Shu fayl yoniga customs_logo.png qo'ysangiz, shu yerda chiqadi -->
-                <img src="customs_logo.png" alt="Bojxona logotipi" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=&quot;logo-fallback&quot;>BJ</span>';">
+        <div class="topbar-inner">
+            <div class="topbar-left">
+                <div class="logo-circle">
+                    <img src="customs_logo.png" alt="Bojxona logotipi"
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=&quot;logo-fallback&quot;>BJ</span>';">
+                </div>
+                <div class="topbar-title-block">
+                    <div class="topbar-title-main">
+                        O‘ZBEKISTON RESPUBLIKASI IQTISODIYOT VA MOLIYA VAZIRLIGI HUZURIDAGI BOJXONA QO‘MITASI
+                    </div>
+                    <div class="topbar-title-sub">
+                        Rasmiy aksiz markalari bilan bog‘liq murojaatlarni ko‘rib chiqish tizimi (demo)
+                    </div>
+                </div>
             </div>
-            <div class="topbar-title">
-                <span>O‘ZBEKISTON RESPUBLIKASI DAVLAT BOJXONA XIZMATI</span>
-                <span>Aksiz markalari bilan bog‘liq murojaatlarni elektron ko‘rib chiqish tizimi (demo)</span>
-            </div>
-        </div>
-        <div class="topbar-right">
-    <!-- Foydalanuvchi badge (avatar + rol + ism/STIR) -->
-    <button id="user-badge" class="user-badge hidden" type="button">
-        <div class="user-badge-avatar" id="user-avatar-circle">U</div>
-        <div class="user-badge-text">
-            <div class="user-badge-role" id="topbar-role">Rol tanlanmagan</div>
-            <div class="user-badge-name" id="topbar-user">Foydalanuvchi aniqlanmagan</div>
-        </div>
-        <div class="user-badge-caret">▾</div>
-    </button>
 
-    <!-- Ochiladigan menyu -->
-    <div id="user-dropdown" class="user-dropdown hidden">
-        <div class="user-dropdown-header">
-            <div class="user-dropdown-avatar" id="user-dropdown-avatar">U</div>
-            <div>
-                <div class="user-dropdown-name" id="user-dropdown-name">Foydalanuvchi</div>
-                <div class="user-dropdown-role" id="user-dropdown-role">Rol tanlanmagan</div>
+            <nav class="topbar-nav">
+                <a href="#">QO‘MITA HAQIDA</a>
+                <a href="#">FAOLIYAT</a>
+                <a href="#">BOJXONA NAZORATI</a>
+                <a href="#">OAV UCHUN</a>
+                <a href="#">HUJJATLAR</a>
+            </nav>
+
+            <div class="topbar-right">
+                <div class="hotline">
+                    <div class="hotline-icon">☎</div>
+                    <span>1108</span>
+                </div>
+
+                <button id="header-login-link" class="header-login-btn" type="button">
+                    Kabinetga kirish
+                </button>
+
+                <div class="lang-pill">UZB</div>
+
+                <!-- foydalanuvchi badge & dropdown (login bo‘lganda) -->
+                <button id="user-badge" class="user-badge hidden" type="button">
+                    <div class="user-badge-avatar" id="user-avatar-circle">U</div>
+                    <div class="user-badge-text">
+                        <div class="user-badge-role" id="topbar-role">Rol tanlanmagan</div>
+                        <div class="user-badge-name" id="topbar-user">Foydalanuvchi aniqlanmagan</div>
+                    </div>
+                    <div class="user-badge-caret">▾</div>
+                </button>
+
+                <div id="user-dropdown" class="user-dropdown hidden">
+                    <div class="user-dropdown-header">
+                        <div class="user-dropdown-avatar" id="user-dropdown-avatar">U</div>
+                        <div>
+                            <div class="user-dropdown-name" id="user-dropdown-name">Foydalanuvchi</div>
+                            <div class="user-dropdown-role" id="user-dropdown-role">Rol tanlanmagan</div>
+                        </div>
+                    </div>
+                    <div class="user-dropdown-body">
+                        <div class="user-dropdown-row">
+                            <span>STIR:</span>
+                            <span id="user-dropdown-inn">—</span>
+                        </div>
+                        <div class="user-dropdown-row">
+                            <span>Kabinet:</span>
+                            <span id="user-dropdown-kabinet">—</span>
+                        </div>
+                    </div>
+                    <div class="user-dropdown-footer">
+                        <button type="button" id="logout-btn-dropdown" class="btn btn-ghost btn-small" style="width:100%;">
+                            Chiqish
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="user-dropdown-body">
-            <div class="user-dropdown-row">
-                <span>STIR:</span>
-                <span id="user-dropdown-inn">—</span>
-            </div>
-            <div class="user-dropdown-row">
-                <span>Kabinet:</span>
-                <span id="user-dropdown-kabinet">—</span>
-            </div>
-        </div>
-        <div class="user-dropdown-footer">
-            <button type="button" id="logout-btn-dropdown" class="btn btn-ghost btn-small" style="width:100%;">
-                Chiqish
-            </button>
         </div>
     </div>
-</div>
 
+    <!-- ASOSIY QISM -->
     <div class="wrapper">
+        <div class="hero-strip">
+            <div class="hero-strip-logo">
+                <img src="customs_logo.png" alt=""
+                     onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=&quot;logo-fallback&quot;>BJ</span>';">
+            </div>
+            <div>
+                <div class="hero-strip-text-main">O‘ZBEKISTON RESPUBLIKASI DAVLAT BOJXONA XIZMATI</div>
+                <div class="hero-strip-text-sub">
+                    Aksiz markalari bilan bog‘liq murojaatlarni elektron ko‘rib chiqish tizimi (demo rejim)
+                </div>
+            </div>
+        </div>
+
         <!-- LOGIN -->
         <div id="login-card" class="card">
             <h1>Aksiz markalari portali</h1>
             <p class="muted">
-                Rolni tanlang va tizimga kiring. Hamma ma'lumotlar hozircha faqat brauzeringiz xotirasida
-                (localStorage) saqlanadi – test va maket sifatida ishlatiladi.
+                Rolni tanlang va tizimga kiring. Hozircha barcha ma'lumotlar faqat shu brauzer xotirasida
+                (localStorage) saqlanadi – test / maket varianti.
             </p>
             <form id="login-form">
                 <div class="row">
@@ -628,9 +735,8 @@ document.addEventListener("click", (e) => {
             </form>
         </div>
 
-        <!-- ASOSIY QISM -->
+        <!-- KABINET -->
         <div id="app-card" class="hidden">
-            <!-- Yuqori info -->
             <div class="card card-soft" style="margin-bottom:18px;">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
                     <div>
@@ -645,17 +751,15 @@ document.addEventListener("click", (e) => {
                 </div>
             </div>
 
-            <!-- Asosiy grid: chapda forma / o'ngda hisobot -->
             <div class="grid-main">
                 <!-- Yangi buyurtma – faqat Tadbirkor -->
                 <div id="new-order-card" class="card">
                     <h3>Yangi aksiz markalari buyurtmasi (Tadbirkor)</h3>
                     <p class="muted">
-                        Quyidagi ma'lumotlar 3566-sonli yo‘riqnomadagi buyurtma shakli tarkibiga mos ravishda
-                        soddalashtirilgan (HS kodi, mahsulot tavsifi, markalar soni, qiymati, to‘lov ma'lumotlari va h.k.).
+                        Ma'lumotlar 3566-son yo‘riqnoma talablari asosida soddalashtirilgan:
+                        HS kodi, mahsulot tavsifi, markalar soni, qiymati, to‘lov ma'lumotlari va h.k.
                     </p>
                     <form id="order-form">
-                        <!-- 1. Asosiy ma'lumotlar -->
                         <div class="section-title">1. Asosiy ma'lumotlar</div>
                         <div class="row">
                             <div class="col-2">
@@ -695,7 +799,6 @@ document.addEventListener("click", (e) => {
                             </div>
                         </div>
 
-                        <!-- 2. Mahsulot ma'lumotlari -->
                         <div class="section-title">2. Mahsulot ma'lumotlari (TIF TN, nomi va h.k.)</div>
                         <div class="row">
                             <div class="col-2">
@@ -723,7 +826,6 @@ document.addEventListener("click", (e) => {
                             </div>
                         </div>
 
-                        <!-- 3. To'lov ma'lumotlari -->
                         <div class="section-title">3. To'lov hujjati ma'lumotlari</div>
                         <div class="row">
                             <div class="col-2">
@@ -746,7 +848,6 @@ document.addEventListener("click", (e) => {
                             </div>
                         </div>
 
-                        <!-- 4. Izoh -->
                         <div class="section-title">4. Qo‘shimcha izoh</div>
                         <div>
                             <label for="order-comment">Izoh (ixtiyoriy)</label>
@@ -754,7 +855,6 @@ document.addEventListener("click", (e) => {
                                       placeholder="Masalan: “Yiliga rejalashtirilgan ishlab chiqarish hajmi bo‘yicha aksiz markalari buyurtirilmoqda”..."></textarea>
                         </div>
 
-                        <!-- Yuborish -->
                         <div style="margin-top:12px;display:flex;align-items:center;gap:8px;">
                             <button type="submit" class="btn btn-primary">
                                 Bojxona organiga yuborish (demo)
@@ -764,7 +864,6 @@ document.addEventListener("click", (e) => {
                     </form>
                 </div>
 
-                <!-- Hisobot blok -->
                 <div id="reports-card" class="card">
                     <h3>Hisobot (joriy rol bo‘yicha)</h3>
                     <div id="report-content" class="report-block">
@@ -773,11 +872,10 @@ document.addEventListener("click", (e) => {
                 </div>
             </div>
 
-            <!-- Buyurtmalar ro'yxati -->
             <div class="card">
                 <h3>Buyurtmalar ro‘yxati</h3>
                 <p class="muted" id="list-hint">
-                    Jadval joriy rolga mos ravishda filtrlanadi. Har bir ustunda “Ko‘rish” tugmasi orqali
+                    Jadval joriy rolga mos ravishda filtrlanadi. “Ko‘rish” tugmasi orqali
                     to‘liq ma'lumot va imzolar tarixini ko‘rish mumkin.
                 </p>
                 <div style="overflow:auto; max-height:440px;">
@@ -804,7 +902,7 @@ document.addEventListener("click", (e) => {
         </div>
     </div>
 
-    <!-- MODAL: murojaat tafsilotlari + imzolash -->
+    <!-- MODAL -->
     <div id="detail-modal-backdrop" class="modal-backdrop hidden">
         <div class="modal">
             <div class="modal-header">
@@ -818,7 +916,6 @@ document.addEventListener("click", (e) => {
             </div>
             <div class="modal-body">
                 <div class="detail-grid">
-                    <!-- Sol tomonda buyurtma ma'lumotlari -->
                     <div>
                         <div class="detail-block">
                             <h4>Asosiy ma'lumotlar</h4>
@@ -908,7 +1005,6 @@ document.addEventListener("click", (e) => {
                         </div>
                     </div>
 
-                    <!-- O'ng tomonda imzolar va imzolash formasi -->
                     <div>
                         <div class="detail-block">
                             <h4>Imzolar tarixi</h4>
@@ -947,15 +1043,12 @@ document.addEventListener("click", (e) => {
             </div>
         </div>
     </div>
-
 </div>
 
 <script>
-    // --- localStorage kalitlari ---
     const STORAGE_KEY_ORDERS = "aksiz_orders_portal_v1";
     const STORAGE_KEY_MARKA = "aksiz_marka_codes_portal_v1";
 
-    // --- global holat ---
     let orders = loadOrders();
     let markaCodes = loadMarkaCodes();
 
@@ -972,194 +1065,123 @@ document.addEventListener("click", (e) => {
         bank: "Bank"
     };
 
-    // Statuslar: jarayon bosqichlari
     const STATUS_META = {
-        new: {
-            label: "Yangi (tadbirkor yuborgan)",
-            badgeClass: "badge-new"
-        },
-        hud_approved: {
-            label: "Hududiy bojxona tasdiqlagan",
-            badgeClass: "badge-review"
-        },
-        hud_rejected: {
-            label: "Hududiy bojxona rad etgan",
-            badgeClass: "badge-rejected"
-        },
-        committee_approved: {
-            label: "Qo‘mita tasdiqlagan",
-            badgeClass: "badge-approved"
-        },
-        committee_rejected: {
-            label: "Qo‘mita rad etgan",
-            badgeClass: "badge-rejected"
-        },
-        duk_assigned: {
-            label: "DUK marka ajratgan",
-            badgeClass: "badge-bank"
-        },
-        bank_paid: {
-            label: "Bank to‘lovni tasdiqlagan",
-            badgeClass: "badge-approved"
-        },
-        completed: {
-            label: "Yakunlangan",
-            badgeClass: "badge-approved"
-        }
+        new: { label: "Yangi (tadbirkor yuborgan)", badgeClass: "badge-new" },
+        hud_approved: { label: "Hududiy bojxona tasdiqlagan", badgeClass: "badge-review" },
+        hud_rejected: { label: "Hududiy bojxona rad etgan", badgeClass: "badge-rejected" },
+        committee_approved: { label: "Qo‘mita tasdiqlagan", badgeClass: "badge-approved" },
+        committee_rejected: { label: "Qo‘mita rad etgan", badgeClass: "badge-rejected" },
+        duk_assigned: { label: "DUK marka ajratgan", badgeClass: "badge-bank" },
+        bank_paid: { label: "Bank to‘lovni tasdiqlagan", badgeClass: "badge-approved" },
+        completed: { label: "Yakunlangan", badgeClass: "badge-approved" }
     };
 
-    // Har bir rol qaysi statuslarga o'zgartira oladi
     const ROLE_STATUS_OPTIONS = {
-        tadbirkor: [], // faqat ko'radi, imzo qo'ymaydi
+        tadbirkor: [],
         hududiy: ["new", "hud_approved", "hud_rejected"],
         qomita: ["hud_approved", "committee_approved", "committee_rejected"],
         duk: ["committee_approved", "duk_assigned", "completed"],
         bank: ["duk_assigned", "bank_paid", "completed"]
     };
 
-    // --- localStorage funksiyalari ---
+    function $(id){ return document.getElementById(id); }
+
     function loadOrders() {
         try {
             const raw = localStorage.getItem(STORAGE_KEY_ORDERS);
             if (!raw) return [];
             const parsed = JSON.parse(raw);
             return Array.isArray(parsed) ? parsed : [];
-        } catch (e) {
-            console.error("Ordersni o'qishda xato:", e);
-            return [];
-        }
+        } catch(e){ return []; }
     }
-
-    function saveOrders(list) {
-        try {
-            localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(list));
-        } catch (e) {
-            console.error("Ordersni yozishda xato:", e);
-        }
+    function saveOrders(list){
+        try{ localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(list)); }catch(e){}
     }
-
-    function loadMarkaCodes() {
-        try {
+    function loadMarkaCodes(){
+        try{
             const raw = localStorage.getItem(STORAGE_KEY_MARKA);
             if (!raw) return [];
             const parsed = JSON.parse(raw);
             return Array.isArray(parsed) ? parsed : [];
-        } catch (e) {
-            console.error("Marka kodlarini o'qishda xato:", e);
-            return [];
-        }
+        }catch(e){ return []; }
+    }
+    function saveMarkaCodes(list){
+        try{ localStorage.setItem(STORAGE_KEY_MARKA, JSON.stringify(list)); }catch(e){}
     }
 
-    function saveMarkaCodes(list) {
-        try {
-            localStorage.setItem(STORAGE_KEY_MARKA, JSON.stringify(list));
-        } catch (e) {
-            console.error("Marka kodlarini yozishda xato:", e);
-        }
-    }
-
-    // --- yordamchi funksiyalar ---
-    function $(id) {
-        return document.getElementById(id);
-    }
-
-    function formatDate(iso) {
-        if (!iso) return "";
+    function formatDate(iso){
+        if(!iso) return "";
         const d = new Date(iso);
-        if (isNaN(d)) return iso;
+        if(isNaN(d)) return iso;
         const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, "0");
-        const day = String(d.getDate()).padStart(2, "0");
+        const m = String(d.getMonth()+1).padStart(2,"0");
+        const day = String(d.getDate()).padStart(2,"0");
         return `${y}-${m}-${day}`;
     }
-
-    function formatDateTime(iso) {
-        if (!iso) return "";
+    function formatDateTime(iso){
+        if(!iso) return "";
         const d = new Date(iso);
-        if (isNaN(d)) return iso;
+        if(isNaN(d)) return iso;
         return d.toLocaleString("uz-UZ");
     }
+    function nowIso(){ return new Date().toISOString(); }
 
-    function nowIso() {
-        return new Date().toISOString();
-    }
-
-    function generateOrderNo() {
+    function generateOrderNo(){
         const year = new Date().getFullYear();
-        const maxId = orders.reduce((max, o) => (o.id > max ? o.id : max), 0);
-        const newId = maxId + 1;
+        const maxId = orders.reduce((m,o)=>(o.id>m?o.id:m),0);
+        const newId = maxId+1;
         return {
-            id: newId,
-            orderNo: `AM-${year}/${String(newId).padStart(5, "0")}`
+            id:newId,
+            orderNo:`AM-${year}/${String(newId).padStart(5,"0")}`
         };
     }
-
-    function getYearSuffix(year) {
-        const y = parseInt(year, 10);
-        if (Number.isNaN(y)) return "";
-        return String(y).slice(-2);
-    }
-
-    function parseNumber(val) {
-        if (val == null || val === "") return null;
-        const n = parseFloat(String(val).replace(",", "."));
-        if (Number.isNaN(n)) return null;
+    function parseNumber(val){
+        if(val==null || val==="") return null;
+        const n = parseFloat(String(val).replace(",","."));
+        if(Number.isNaN(n)) return null;
         return n;
     }
-
-    // Har bir STIR + yil + mahsulot turi bo'yicha ALBATTA bitta kod
-    // Alkogol: 5 xonali (yy + 3 xonali tartib raqam)
-    // Tamaki:  4 xonali (yy + 2 xonali tartib raqam)
-    function getOrCreateMarkaCode(inn, year, productType) {
-        if (!inn) return null;
-        const y = parseInt(year, 10);
-        if (Number.isNaN(y)) return null;
-
-        let rec = markaCodes.find((c) => c.inn === inn && c.year === y);
-        if (!rec) {
-            rec = {
-                inn: inn,
-                year: y,
-                alkoCode: null,
-                tobCode: null
-            };
+    function getYearSuffix(year){
+        const y=parseInt(year,10);
+        if(Number.isNaN(y)) return "";
+        return String(y).slice(-2);
+    }
+    function getOrCreateMarkaCode(inn,year,productType){
+        if(!inn) return null;
+        const y=parseInt(year,10);
+        if(Number.isNaN(y)) return null;
+        let rec = markaCodes.find(c=>c.inn===inn && c.year===y);
+        if(!rec){
+            rec={inn:inn,year:y,alkoCode:null,tobCode:null};
             markaCodes.push(rec);
         }
-
-        const yearSuffix = getYearSuffix(y);
-        let code = null;
-
-        if (productType === "alkogol") {
-            if (rec.alkoCode) {
-                return rec.alkoCode;
-            }
+        const yearSuffix=getYearSuffix(y);
+        let code=null;
+        if(productType==="alkogol"){
+            if(rec.alkoCode) return rec.alkoCode;
             const usedNums = markaCodes
-                .filter((c) => c.year === y && c.alkoCode)
-                .map((c) => parseInt(c.alkoCode.slice(2), 10))
-                .filter((n) => !Number.isNaN(n));
-            const next = usedNums.length ? Math.max(...usedNums) + 1 : 1;
-            const numericPart = String(next).padStart(3, "0");
-            code = yearSuffix + numericPart;
-            rec.alkoCode = code;
-        } else if (productType === "tamaki") {
-            if (rec.tobCode) {
-                return rec.tobCode;
-            }
+                .filter(c=>c.year===y && c.alkoCode)
+                .map(c=>parseInt(c.alkoCode.slice(2),10))
+                .filter(n=>!Number.isNaN(n));
+            const next = usedNums.length?Math.max(...usedNums)+1:1;
+            const numericPart = String(next).padStart(3,"0");
+            code = yearSuffix+numericPart;
+            rec.alkoCode=code;
+        }else if(productType==="tamaki"){
+            if(rec.tobCode) return rec.tobCode;
             const usedNums = markaCodes
-                .filter((c) => c.year === y && c.tobCode)
-                .map((c) => parseInt(c.tobCode.slice(2), 10))
-                .filter((n) => !Number.isNaN(n));
-            const next = usedNums.length ? Math.max(...usedNums) + 1 : 1;
-            const numericPart = String(next).padStart(2, "0");
-            code = yearSuffix + numericPart;
-            rec.tobCode = code;
+                .filter(c=>c.year===y && c.tobCode)
+                .map(c=>parseInt(c.tobCode.slice(2),10))
+                .filter(n=>!Number.isNaN(n));
+            const next = usedNums.length?Math.max(...usedNums)+1:1;
+            const numericPart = String(next).padStart(2,"0");
+            code = yearSuffix+numericPart;
+            rec.tobCode=code;
         }
-
         saveMarkaCodes(markaCodes);
         return code;
     }
 
-    // --- LOGIN LOGIKA ---
     const loginForm = $("login-form");
     const loginCard = $("login-card");
     const appCard = $("app-card");
@@ -1169,6 +1191,7 @@ document.addEventListener("click", (e) => {
     const newOrderCard = $("new-order-card");
     const listHint = $("list-hint");
     const reportContent = $("report-content");
+
     const topbarRole = $("topbar-role");
     const topbarUser = $("topbar-user");
     const userBadge = $("user-badge");
@@ -1180,33 +1203,57 @@ document.addEventListener("click", (e) => {
     const userDropdownInn = $("user-dropdown-inn");
     const userDropdownKabinet = $("user-dropdown-kabinet");
     const logoutBtnDropdown = $("logout-btn-dropdown");
+    const headerLoginLink = $("header-login-link");
 
-    loginForm.addEventListener("submit", (e) => {
+    function initialsFromName(name){
+        if(!name) return "U";
+        const parts=name.trim().split(/\s+/);
+        if(parts.length===1) return parts[0].charAt(0).toUpperCase();
+        return (parts[0].charAt(0)+parts[1].charAt(0)).toUpperCase();
+    }
+
+    function updateUserUI(){
+        const roleTitle = ROLE_LABELS[currentRole] || "Kabinet";
+        const kabinetTitle = roleTitle+" kabineti";
+
+        let nameShort="";
+        if(currentRole==="tadbirkor" && currentInn){
+            nameShort = currentInn+" · "+(currentName||"");
+        }else{
+            nameShort = currentName || roleTitle;
+        }
+
+        topbarRole.textContent = roleTitle;
+        topbarUser.textContent = nameShort;
+
+        userDropdownName.textContent = currentName || "Foydalanuvchi";
+        userDropdownRole.textContent = roleTitle;
+        userDropdownInn.textContent = currentInn || "—";
+        userDropdownKabinet.textContent = kabinetTitle;
+
+        const initials = initialsFromName(currentName || currentInn || "U");
+        userAvatarCircle.textContent = initials;
+        userDropdownAvatar.textContent = initials;
+
+        userBadge.classList.remove("hidden");
+        headerLoginLink.classList.add("hidden");
+    }
+
+    loginForm.addEventListener("submit",(e)=>{
         e.preventDefault();
         const roleVal = $("login-role").value;
         const innVal = $("login-inn").value.trim();
         const nameVal = $("login-name").value.trim() || "Foydalanuvchi";
 
         currentRole = roleVal;
-         ...
-    appTitle.textContent = roleTitle + " kabineti";
-    appSubtitle.textContent = ...
-    currentRole === "tadbirkor"
-            ? `${currentInn} – ${currentName} (Tadbirkor)`
-            : `${roleTitle} – ${currentName}`;
-
-    // Foydalanuvchi badge + dropdown ma'lumotlarini yangilash
-    updateUserUI();
-});
-
-        if (roleVal === "tadbirkor") {
-            if (!innVal) {
+        if(roleVal==="tadbirkor"){
+            if(!innVal){
                 alert("Tadbirkor sifatida kirish uchun STIR (INN) kiritish majburiy.");
                 return;
             }
             currentInn = innVal;
             currentName = nameVal || "Tadbirkor";
-        } else {
+        }else{
             currentInn = null;
             currentName = nameVal || ROLE_LABELS[roleVal];
         }
@@ -1215,411 +1262,297 @@ document.addEventListener("click", (e) => {
         appCard.classList.remove("hidden");
 
         const roleTitle = ROLE_LABELS[currentRole] || "Kabinet";
-        appTitle.textContent = roleTitle + " kabineti";
+        appTitle.textContent = roleTitle+" kabineti";
         appSubtitle.textContent =
-            currentRole === "tadbirkor"
+            currentRole==="tadbirkor"
                 ? `${currentInn} – ${currentName} (Tadbirkor)`
                 : `${roleTitle} – ${currentName}`;
 
-        topbarRole.textContent = roleTitle;
-        topbarUser.textContent =
-            currentRole === "tadbirkor"
-                ? `${currentInn} – ${currentName}`
-                : currentName;
-
-        if (currentRole === "tadbirkor") {
+        if(currentRole==="tadbirkor"){
             newOrderCard.classList.remove("hidden");
-            listHint.textContent =
-                "Faqat ushbu STIR bo‘yicha buyurtmalar ko‘rsatilmoqda.";
-        } else {
+            listHint.textContent="Faqat ushbu STIR bo‘yicha buyurtmalar ko‘rsatilmoqda.";
+        }else{
             newOrderCard.classList.add("hidden");
-            listHint.textContent =
-                "Jadval joriy roldagi tegishli buyurtmalarni ko‘rsatmoqda. Murojaatni 'Ko‘rish' orqali ichiga kirib, imzolash mumkin.";
+            listHint.textContent="Jadval joriy roldagi tegishli buyurtmalarni ko‘rsatmoqda. Murojaatni 'Ko‘rish' orqali ichiga kirib, imzolash mumkin.";
         }
 
+        updateUserUI();
         renderOrdersForCurrent();
     });
-function initialsFromName(name) {
-    if (!name) return "U";
-    const parts = name.trim().split(/\s+/);
-    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
-    return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
-}
 
-function updateUserUI() {
-    const roleTitle = ROLE_LABELS[currentRole] || "Kabinet";
-    const kabinetTitle = roleTitle + " kabineti";
+    function doLogout(){
+        currentInn=null;
+        currentName=null;
+        currentRole="tadbirkor";
 
-    let nameShort = "";
-    if (currentRole === "tadbirkor" && currentInn) {
-        nameShort = currentInn + " · " + (currentName || "");
-    } else {
-        nameShort = currentName || roleTitle;
+        $("login-inn").value="";
+        $("login-name").value="";
+        $("login-role").value="tadbirkor";
+
+        appCard.classList.add("hidden");
+        loginCard.classList.remove("hidden");
+
+        topbarRole.textContent="Rol tanlanmagan";
+        topbarUser.textContent="Foydalanuvchi aniqlanmagan";
+        userBadge.classList.add("hidden");
+        userDropdown.classList.add("hidden");
+        headerLoginLink.classList.remove("hidden");
+    }
+    logoutBtn.addEventListener("click",doLogout);
+    logoutBtnDropdown.addEventListener("click",doLogout);
+
+    if(headerLoginLink){
+        headerLoginLink.addEventListener("click",(e)=>{
+            e.preventDefault();
+            loginCard.scrollIntoView({behavior:"smooth",block:"start"});
+        });
     }
 
-    // Badge ichidagi matn
-    topbarRole.textContent = roleTitle;
-    topbarUser.textContent = nameShort;
-
-    // Dropdown ichidagi ma'lumotlar
-    userDropdownName.textContent = currentName || "Foydalanuvchi";
-    userDropdownRole.textContent = roleTitle;
-    userDropdownInn.textContent = currentInn || "—";
-    userDropdownKabinet.textContent = kabinetTitle;
-
-    // Inicial (avatar uchun)
-    const initials = initialsFromName(currentName || currentInn || "U");
-    userAvatarCircle.textContent = initials;
-    userDropdownAvatar.textContent = initials;
-
-    // Badge ni ko‘rsatish
-    userBadge.classList.remove("hidden");
-}
-    function doLogout() {
-    currentInn = null;
-    currentName = null;
-    currentRole = "tadbirkor";
-
-    $("login-inn").value = "";
-    $("login-name").value = "";
-    $("login-role").value = "tadbirkor";
-
-    appCard.classList.add("hidden");
-    loginCard.classList.remove("hidden");
-
-    // Topbarda foydalanuvchi ma'lumotlarini tozalash va yashirish
-    topbarRole.textContent = "Rol tanlanmagan";
-    topbarUser.textContent = "Foydalanuvchi aniqlanmagan";
-    userBadge.classList.add("hidden");
-    userDropdown.classList.add("hidden");
-}
-
-logoutBtn.addEventListener("click", doLogout);
-logoutBtnDropdown.addEventListener("click", doLogout);
-
-
-    // --- Yangi buyurtma (faqat Tadbirkor) ---
     const orderForm = $("order-form");
     const orderStatusMsg = $("order-status-msg");
 
-    orderForm.addEventListener("submit", (e) => {
-        e.preventDefault();
+    if(orderForm){
+        orderForm.addEventListener("submit",(e)=>{
+            e.preventDefault();
+            if(currentRole!=="tadbirkor" || !currentInn){
+                alert("Yangi buyurtma faqat Tadbirkor uchun.");
+                return;
+            }
+            const productType = $("product-type").value;
+            const quarter = $("quarter").value;
+            const periodFrom = $("period-from").value || null;
+            const periodTo = $("period-to").value || null;
+            const marksQtyVal = $("marks-qty").value;
 
-        if (currentRole !== "tadbirkor" || !currentInn) {
-            alert("Yangi buyurtma faqat Tadbirkor uchun.");
-            return;
+            const hsCode = $("hs-code").value.trim();
+            const productName = $("product-name").value.trim();
+            const unitVolume = $("unit-volume").value.trim();
+            const packageType = $("package-type").value.trim();
+            const markUnitValueVal = $("mark-unit-value").value;
+
+            const paymentDocNo = $("payment-doc-no").value.trim();
+            const paymentDocDate = $("payment-doc-date").value || null;
+            const paymentAmountVal = $("payment-amount").value;
+            const paymentBank = $("payment-bank").value.trim();
+
+            const marks = parseInt(marksQtyVal,10);
+            if(Number.isNaN(marks) || marks<=0){
+                orderStatusMsg.textContent="Xato: Aksiz markalari soni noto‘g‘ri.";
+                orderStatusMsg.className="error-msg";
+                return;
+            }
+
+            const markUnitValue = parseNumber(markUnitValueVal);
+            const paymentAmount = parseNumber(paymentAmountVal);
+            const totalExciseValue = markUnitValue!=null ? markUnitValue*marks : null;
+
+            const {id,orderNo} = generateOrderNo();
+            const now = nowIso();
+
+            const order = {
+                id,
+                orderNo,
+                inn: currentInn,
+                entrepreneurName: currentName,
+                productType,
+                quarter: quarter || null,
+                periodFrom,
+                periodTo,
+                marksQty: marks,
+                hsCode: hsCode || null,
+                productName: productName || null,
+                unitVolume: unitVolume || null,
+                packageType: packageType || null,
+                markUnitValue: markUnitValue,
+                totalExciseValue: totalExciseValue,
+                paymentDocNo: paymentDocNo || null,
+                paymentDocDate: paymentDocDate,
+                paymentAmount: paymentAmount,
+                paymentBank: paymentBank || null,
+                status: "new",
+                markaCode: null,
+                comment: ($("order-comment").value || "").trim() || null,
+                createdAt: now,
+                updatedAt: now,
+                signatures: []
+            };
+
+            orders.push(order);
+            saveOrders(orders);
+
+            orderStatusMsg.textContent="Buyurtma muvaffaqiyatli saqlandi (demo).";
+            orderStatusMsg.className="ok-msg";
+            orderForm.reset();
+            $("product-type").value="alkogol";
+
+            renderOrdersForCurrent();
+        });
+    }
+
+    function renderOrdersForCurrent(){
+        let list=orders;
+        if(currentRole==="tadbirkor" && currentInn){
+            list=list.filter(o=>o.inn===currentInn);
         }
-
-        const productType = $("product-type").value;
-        const quarter = $("quarter").value;
-        const periodFrom = $("period-from").value || null;
-        const periodTo = $("period-to").value || null;
-        const marksQtyVal = $("marks-qty").value;
-
-        const hsCode = $("hs-code").value.trim();
-        const productName = $("product-name").value.trim();
-        const unitVolume = $("unit-volume").value.trim();
-        const packageType = $("package-type").value.trim();
-        const markUnitValueVal = $("mark-unit-value").value;
-
-        const paymentDocNo = $("payment-doc-no").value.trim();
-        const paymentDocDate = $("payment-doc-date").value || null;
-        const paymentAmountVal = $("payment-amount").value;
-        const paymentBank = $("payment-bank").value.trim();
-
-        const marks = parseInt(marksQtyVal, 10);
-        if (Number.isNaN(marks) || marks <= 0) {
-            orderStatusMsg.textContent = "Xato: Aksiz markalari soni noto‘g‘ri.";
-            orderStatusMsg.className = "error-msg";
-            return;
+        if(currentRole==="hududiy"){
+            list=list.filter(o=>["new","hud_approved","hud_rejected"].includes(o.status||"new"));
+        }else if(currentRole==="qomita"){
+            list=list.filter(o=>["hud_approved","committee_approved","committee_rejected"].includes(o.status||"new"));
+        }else if(currentRole==="duk"){
+            list=list.filter(o=>["committee_approved","duk_assigned","completed"].includes(o.status||"new"));
+        }else if(currentRole==="bank"){
+            list=list.filter(o=>["duk_assigned","bank_paid","completed"].includes(o.status||"new"));
         }
-
-        const markUnitValue = parseNumber(markUnitValueVal);
-        const paymentAmount = parseNumber(paymentAmountVal);
-        const totalExciseValue =
-            markUnitValue != null ? markUnitValue * marks : null;
-
-        const { id, orderNo } = generateOrderNo();
-        const now = nowIso();
-
-        const order = {
-            id,
-            orderNo,
-            inn: currentInn,
-            entrepreneurName: currentName,
-            productType,
-            quarter: quarter || null,
-            periodFrom,
-            periodTo,
-            marksQty: marks,
-
-            hsCode: hsCode || null,
-            productName: productName || null,
-            unitVolume: unitVolume || null,
-            packageType: packageType || null,
-            markUnitValue: markUnitValue,
-            totalExciseValue: totalExciseValue,
-
-            paymentDocNo: paymentDocNo || null,
-            paymentDocDate: paymentDocDate,
-            paymentAmount: paymentAmount,
-            paymentBank: paymentBank || null,
-
-            status: "new",
-            markaCode: null,        // DUK bosqichida to'ldiriladi
-            comment: ($("order-comment").value || "").trim() || null,
-            createdAt: now,
-            updatedAt: now,
-
-            // Imzolar ro'yxati
-            signatures: []
-        };
-
-        orders.push(order);
-        saveOrders(orders);
-
-        orderStatusMsg.textContent = "Buyurtma muvaffaqiyatli saqlandi (demo).";
-        orderStatusMsg.className = "ok-msg";
-        orderForm.reset();
-        $("product-type").value = "alkogol";
-
-        renderOrdersForCurrent();
-    });
-
-    // --- Buyurtmalarni ko'rsatish va hisobot ---
-    function renderOrdersForCurrent() {
-        let list = orders;
-
-        if (currentRole === "tadbirkor" && currentInn) {
-            list = list.filter((o) => o.inn === currentInn);
-        }
-
-        if (currentRole === "hududiy") {
-            list = list.filter((o) =>
-                ["new", "hud_approved", "hud_rejected"].includes(o.status || "new")
-            );
-        } else if (currentRole === "qomita") {
-            list = list.filter((o) =>
-                ["hud_approved", "committee_approved", "committee_rejected"].includes(
-                    o.status || "new"
-                )
-            );
-        } else if (currentRole === "duk") {
-            list = list.filter((o) =>
-                ["committee_approved", "duk_assigned", "completed"].includes(
-                    o.status || "new"
-                )
-            );
-        } else if (currentRole === "bank") {
-            list = list.filter((o) =>
-                ["duk_assigned", "bank_paid", "completed"].includes(o.status || "new")
-            );
-        }
-
         renderOrders(list);
         renderReport(list);
     }
 
-    function renderOrders(list) {
-        const tbody = $("orders-tbody");
-        tbody.innerHTML = "";
-
-        if (!Array.isArray(list) || list.length === 0) {
-            const tr = document.createElement("tr");
-            const td = document.createElement("td");
-            td.colSpan = 11;
-            td.textContent = "Hozircha buyurtmalar mavjud emas.";
-            td.style.textAlign = "center";
+    function renderOrders(list){
+        const tbody=$("orders-tbody");
+        if(!tbody) return;
+        tbody.innerHTML="";
+        if(!Array.isArray(list) || list.length===0){
+            const tr=document.createElement("tr");
+            const td=document.createElement("td");
+            td.colSpan=11;
+            td.textContent="Hozircha buyurtmalar mavjud emas.";
+            td.style.textAlign="center";
             tr.appendChild(td);
             tbody.appendChild(tr);
             return;
         }
-
-        list
-            .slice()
-            .sort((a, b) => b.id - a.id)
-            .forEach((o) => {
-                const tr = document.createElement("tr");
-                const statusKey = o.status || "new";
-                const meta = STATUS_META[statusKey] || {
-                    label: statusKey,
-                    badgeClass: "badge-new"
-                };
-
-                const markaText = o.markaCode || "-";
-
-                let paymentText = "-";
-                if (o.paymentAmount != null) {
-                    paymentText = o.paymentAmount.toLocaleString("uz-UZ", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                }
-
-                tr.innerHTML = `
-                    <td>${o.id}</td>
-                    <td>${o.inn || "-"}</td>
-                    <td>${o.orderNo}</td>
-                    <td>${formatDate(o.createdAt)}</td>
-                    <td>${o.productType === "alkogol" ? "Alkogol" : "Tamaki"}</td>
-                    <td>${o.hsCode || ""}</td>
-                    <td>${(o.marksQty || 0).toLocaleString("uz-UZ")}</td>
-                    <td>${markaText}</td>
-                    <td>${paymentText}</td>
-                    <td><span class="badge ${meta.badgeClass}">${meta.label}</span></td>
-                `;
-
-                const tdAction = document.createElement("td");
-                tdAction.style.whiteSpace = "nowrap";
-
-                const viewBtn = document.createElement("button");
-                viewBtn.textContent = "Ko‘rish";
-                viewBtn.className = "btn btn-ghost btn-small";
-                viewBtn.addEventListener("click", () => openOrderDetail(o.id));
-                tdAction.appendChild(viewBtn);
-
-                const opts = ROLE_STATUS_OPTIONS[currentRole] || [];
-                if (opts.length > 0) {
-                    const select = document.createElement("select");
-                    select.style.fontSize = "11px";
-                    select.style.marginLeft = "4px";
-
-                    if (statusKey && !opts.includes(statusKey)) {
-                        const optCurrent = document.createElement("option");
-                        optCurrent.value = statusKey;
-                        optCurrent.textContent = meta.label + " (hozirgi)";
-                        select.appendChild(optCurrent);
-                    }
-
-                    opts.forEach((code) => {
-                        const m = STATUS_META[code] || { label: code };
-                        const opt = document.createElement("option");
-                        opt.value = code;
-                        opt.textContent = m.label;
-                        if (code === statusKey) opt.selected = true;
-                        select.appendChild(opt);
-                    });
-
-                    const saveBtn = document.createElement("button");
-                    saveBtn.textContent = "Holatni saqlash";
-                    saveBtn.className = "btn btn-ghost btn-small";
-                    saveBtn.style.marginLeft = "4px";
-                    saveBtn.addEventListener("click", () => {
-                        const newStatus = select.value;
-                        updateOrderStatus(o.id, newStatus);
-                    });
-
-                    tdAction.appendChild(select);
-                    tdAction.appendChild(saveBtn);
-                }
-
-                tr.appendChild(tdAction);
-                tbody.appendChild(tr);
-            });
-    }
-
-    function renderReport(list) {
-        if (!reportContent) return;
-
-        if (!Array.isArray(list) || list.length === 0) {
-            reportContent.innerHTML = "Hisobot uchun ma'lumot mavjud emas.";
-            return;
-        }
-
-        const totalOrders = list.length;
-        const totalMarks = list.reduce(
-            (s, o) => s + (o.marksQty || 0),
-            0
-        );
-        const totalPayment = list.reduce(
-            (s, o) => s + (o.paymentAmount || 0),
-            0
-        );
-        const totalExcise = list.reduce(
-            (s, o) => s + (o.totalExciseValue || 0),
-            0
-        );
-
-        const byStatus = {};
-        list.forEach((o) => {
-            const st = o.status || "new";
-            byStatus[st] = (byStatus[st] || 0) + 1;
-        });
-
-        let html = "";
-        html += `<p>Jami buyurtmalar: <b>${totalOrders}</b>.</p>`;
-        html += `<p>Jami aksiz markalari soni: <b>${totalMarks.toLocaleString("uz-UZ")}</b>.</p>`;
-        html += `<p>Buyurtmalar bo‘yicha to‘lov hujjatlarida ko‘rsatilgan umumiy summa: <b>${totalPayment.toLocaleString(
-            "uz-UZ",
-            { minimumFractionDigits: 2, maximumFractionDigits: 2 }
-        )}</b> so‘m.</p>`;
-
-        if (totalExcise > 0) {
-            html += `<p>Markalar bo‘yicha hisoblangan umumiy qiymat (soni × 1 dona narxi): <b>${totalExcise.toLocaleString(
-                "uz-UZ",
-                { minimumFractionDigits: 2, maximumFractionDigits: 2 }
-            )}</b> so‘m.</p>`;
-        }
-
-        html += `<p>Holatlar bo‘yicha taqsimot:</p><ul>`;
-        Object.keys(byStatus).forEach((k) => {
-            const meta = STATUS_META[k] || { label: k };
-            html += `<li>${meta.label}: <b>${byStatus[k]}</b> ta</li>`;
-        });
-        html += `</ul>`;
-
-        if (currentRole === "tadbirkor" && currentInn) {
-            html += `<p class="muted">Ushbu hisobot faqat STIR <b>${currentInn}</b> bo‘yicha hisoblangan.</p>`;
-        } else {
-            const roleTitle = ROLE_LABELS[currentRole] || currentRole;
-            html += `<p class="muted">Hisobot joriy rol: <b>${roleTitle}</b> kesimida shakllantirilgan (demo).</p>`;
-        }
-
-        reportContent.innerHTML = html;
-    }
-
-    function updateOrderStatus(id, newStatus) {
-        const idx = orders.findIndex((o) => o.id === id);
-        if (idx === -1) {
-            alert("Buyurtma topilmadi.");
-            return;
-        }
-        const order = orders[idx];
-
-        const allowed = ROLE_STATUS_OPTIONS[currentRole] || [];
-        if (!allowed.includes(newStatus)) {
-            alert(
-                "Bu holatni \"" +
-                (ROLE_LABELS[currentRole] || currentRole) +
-                "\" o‘zgartira olmaydi."
-            );
-            return;
-        }
-
-        // DUK bosqichida marka kodi ajratish
-        if (currentRole === "duk" && newStatus === "duk_assigned") {
-            let year = null;
-            if (order.quarter && order.quarter.includes("-")) {
-                const parts = order.quarter.split("-");
-                year = parseInt(parts[0], 10);
-            } else if (order.createdAt) {
-                year = new Date(order.createdAt).getFullYear();
+        list.slice().sort((a,b)=>b.id-a.id).forEach(o=>{
+            const tr=document.createElement("tr");
+            const statusKey=o.status||"new";
+            const meta=STATUS_META[statusKey] || {label:statusKey,badgeClass:"badge-new"};
+            const markaText=o.markaCode||"-";
+            let paymentText="-";
+            if(o.paymentAmount!=null){
+                paymentText=o.paymentAmount.toLocaleString("uz-UZ",{minimumFractionDigits:2,maximumFractionDigits:2});
             }
-            const code = getOrCreateMarkaCode(order.inn, year, order.productType);
-            order.markaCode = code;
-        }
+            tr.innerHTML=`
+                <td>${o.id}</td>
+                <td>${o.inn || "-"}</td>
+                <td>${o.orderNo}</td>
+                <td>${formatDate(o.createdAt)}</td>
+                <td>${o.productType==="alkogol"?"Alkogol":"Tamaki"}</td>
+                <td>${o.hsCode || ""}</td>
+                <td>${(o.marksQty || 0).toLocaleString("uz-UZ")}</td>
+                <td>${markaText}</td>
+                <td>${paymentText}</td>
+                <td><span class="badge ${meta.badgeClass}">${meta.label}</span></td>
+            `;
+            const tdAction=document.createElement("td");
+            tdAction.style.whiteSpace="nowrap";
+            const viewBtn=document.createElement("button");
+            viewBtn.textContent="Ko‘rish";
+            viewBtn.className="btn btn-ghost btn-small";
+            viewBtn.addEventListener("click",()=>openOrderDetail(o.id));
+            tdAction.appendChild(viewBtn);
 
-        order.status = newStatus;
-        order.updatedAt = nowIso();
+            const opts=ROLE_STATUS_OPTIONS[currentRole]||[];
+            if(opts.length>0){
+                const select=document.createElement("select");
+                select.style.fontSize="11px";
+                select.style.marginLeft="4px";
+                if(statusKey && !opts.includes(statusKey)){
+                    const optCurrent=document.createElement("option");
+                    optCurrent.value=statusKey;
+                    optCurrent.textContent=meta.label+" (hozirgi)";
+                    select.appendChild(optCurrent);
+                }
+                opts.forEach(code=>{
+                    const m=STATUS_META[code] || {label:code};
+                    const opt=document.createElement("option");
+                    opt.value=code;
+                    opt.textContent=m.label;
+                    if(code===statusKey) opt.selected=true;
+                    select.appendChild(opt);
+                });
+                const saveBtn=document.createElement("button");
+                saveBtn.textContent="Holatni saqlash";
+                saveBtn.className="btn btn-ghost btn-small";
+                saveBtn.style.marginLeft="4px";
+                saveBtn.addEventListener("click",()=>{
+                    const newStatus=select.value;
+                    updateOrderStatus(o.id,newStatus);
+                });
+                tdAction.appendChild(select);
+                tdAction.appendChild(saveBtn);
+            }
+            tr.appendChild(tdAction);
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderReport(list){
+        if(!reportContent) return;
+        if(!Array.isArray(list) || list.length===0){
+            reportContent.innerHTML="Hisobot uchun ma'lumot mavjud emas.";
+            return;
+        }
+        const totalOrders=list.length;
+        const totalMarks=list.reduce((s,o)=>s+(o.marksQty||0),0);
+        const totalPayment=list.reduce((s,o)=>s+(o.paymentAmount||0),0);
+        const totalExcise=list.reduce((s,o)=>s+(o.totalExciseValue||0),0);
+
+        const byStatus={};
+        list.forEach(o=>{
+            const st=o.status||"new";
+            byStatus[st]=(byStatus[st]||0)+1;
+        });
+
+        let html="";
+        html+=`<p>Jami buyurtmalar: <b>${totalOrders}</b>.</p>`;
+        html+=`<p>Jami aksiz markalari soni: <b>${totalMarks.toLocaleString("uz-UZ")}</b>.</p>`;
+        html+=`<p>To‘lov hujjatlarida ko‘rsatilgan umumiy summa: <b>${totalPayment.toLocaleString("uz-UZ",{minimumFractionDigits:2,maximumFractionDigits:2})}</b> so‘m.</p>`;
+        if(totalExcise>0){
+            html+=`<p>Markalar bo‘yicha hisoblangan umumiy qiymat (soni × 1 dona narxi): <b>${totalExcise.toLocaleString("uz-UZ",{minimumFractionDigits:2,maximumFractionDigits:2})}</b> so‘m.</p>`;
+        }
+        html+=`<p>Holatlar bo‘yicha taqsimot:</p><ul>`;
+        Object.keys(byStatus).forEach(k=>{
+            const meta=STATUS_META[k] || {label:k};
+            html+=`<li>${meta.label}: <b>${byStatus[k]}</b> ta</li>`;
+        });
+        html+=`</ul>`;
+        if(currentRole==="tadbirkor" && currentInn){
+            html+=`<p class="muted">Hisobot faqat STIR <b>${currentInn}</b> bo‘yicha.</p>`;
+        }else{
+            const roleTitle=ROLE_LABELS[currentRole] || currentRole;
+            html+=`<p class="muted">Hisobot joriy rol: <b>${roleTitle}</b> kesimida shakllantirilgan (demo).</p>`;
+        }
+        reportContent.innerHTML=html;
+    }
+
+    function updateOrderStatus(id,newStatus){
+        const idx=orders.findIndex(o=>o.id===id);
+        if(idx===-1){ alert("Buyurtma topilmadi."); return; }
+        const order=orders[idx];
+        const allowed=ROLE_STATUS_OPTIONS[currentRole]||[];
+        if(!allowed.includes(newStatus)){
+            alert("Bu holatni \""+(ROLE_LABELS[currentRole]||currentRole)+"\" o‘zgartira olmaydi.");
+            return;
+        }
+        if(currentRole==="duk" && newStatus==="duk_assigned"){
+            let year=null;
+            if(order.quarter && order.quarter.includes("-")){
+                const parts=order.quarter.split("-");
+                year=parseInt(parts[0],10);
+            }else if(order.createdAt){
+                year=new Date(order.createdAt).getFullYear();
+            }
+            const code=getOrCreateMarkaCode(order.inn,year,order.productType);
+            order.markaCode=code;
+        }
+        order.status=newStatus;
+        order.updatedAt=nowIso();
         saveOrders(orders);
         renderOrdersForCurrent();
-
-        if (currentDetailOrderId === id) {
+        if(currentDetailOrderId===id){
             openOrderDetail(id);
         }
     }
 
-    // --- MODAL: murojaat tafsilotlari + imzolash ---
     const detailBackdrop = $("detail-modal-backdrop");
     const detailCloseBtn = $("detail-close-btn");
     const detailCloseBtnBottom = $("detail-close-btn-bottom");
@@ -1633,7 +1566,6 @@ logoutBtnDropdown.addEventListener("click", doLogout);
     const detailPeriod = $("detail-period");
     const detailStatus = $("detail-status");
     const detailMarkaCode = $("detail-marka-code");
-
     const detailHsCode = $("detail-hs-code");
     const detailProductName = $("detail-product-name");
     const detailUnitVolume = $("detail-unit-volume");
@@ -1641,81 +1573,65 @@ logoutBtnDropdown.addEventListener("click", doLogout);
     const detailMarksQty = $("detail-marks-qty");
     const detailMarkUnitValue = $("detail-mark-unit-value");
     const detailTotalExcise = $("detail-total-excise");
-
     const detailPaymentDoc = $("detail-payment-doc");
     const detailPaymentAmount = $("detail-payment-amount");
     const detailPaymentBank = $("detail-payment-bank");
-
     const detailComment = $("detail-comment");
     const detailSignaturesList = $("detail-signatures-list");
     const detailFooterMeta = $("detail-footer-meta");
-
     const detailSignFormBlock = $("detail-sign-form-block");
     const detailSignFio = $("detail-sign-fio");
     const detailSignComment = $("detail-sign-comment");
     const detailSignBtn = $("detail-sign-btn");
     const detailSignMsg = $("detail-sign-msg");
 
-    function openOrderDetail(id) {
-        const order = orders.find((o) => o.id === id);
-        if (!order) {
-            alert("Buyurtma topilmadi.");
-            return;
-        }
-        currentDetailOrderId = id;
-
-        const meta = STATUS_META[order.status || "new"] || {
-            label: order.status || "Noma'lum",
-            badgeClass: "badge-new"
-        };
-
-        detailTitle.textContent = `Buyurtma: ${order.orderNo}`;
-        detailSubtitle.textContent = `ID: ${order.id}, yaratilgan sana: ${formatDate(order.createdAt)}`;
-        detailInn.textContent = order.inn || "-";
-        detailEntrepreneur.textContent = order.entrepreneurName || "-";
-        detailProductType.textContent = order.productType === "alkogol" ? "Alkogol mahsulotlari" : "Tamaki mahsulotlari";
-        detailQuarter.textContent = order.quarter || "-";
-        detailPeriod.textContent = (order.periodFrom ? formatDate(order.periodFrom) : "?") +
-            " – " +
-            (order.periodTo ? formatDate(order.periodTo) : "?");
-        detailStatus.textContent = meta.label;
-        detailMarkaCode.textContent = order.markaCode || "-";
-
-        detailHsCode.textContent = order.hsCode || "";
-        detailProductName.textContent = order.productName || "";
-        detailUnitVolume.textContent = order.unitVolume || "";
-        detailPackageType.textContent = order.packageType || "";
-        detailMarksQty.textContent = (order.marksQty || 0).toLocaleString("uz-UZ");
-        detailMarkUnitValue.textContent =
-            order.markUnitValue != null
-                ? order.markUnitValue.toLocaleString("uz-UZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " so‘m"
+    function openOrderDetail(id){
+        const order=orders.find(o=>o.id===id);
+        if(!order){ alert("Buyurtma topilmadi."); return; }
+        currentDetailOrderId=id;
+        const meta=STATUS_META[order.status||"new"] || {label:order.status||"Noma'lum",badgeClass:"badge-new"};
+        detailTitle.textContent=`Buyurtma: ${order.orderNo}`;
+        detailSubtitle.textContent=`ID: ${order.id}, yaratilgan sana: ${formatDate(order.createdAt)}`;
+        detailInn.textContent=order.inn || "-";
+        detailEntrepreneur.textContent=order.entrepreneurName || "-";
+        detailProductType.textContent=order.productType==="alkogol"?"Alkogol mahsulotlari":"Tamaki mahsulotlari";
+        detailQuarter.textContent=order.quarter || "-";
+        detailPeriod.textContent=(order.periodFrom?formatDate(order.periodFrom):"?")+" – "+(order.periodTo?formatDate(order.periodTo):"?");
+        detailStatus.textContent=meta.label;
+        detailMarkaCode.textContent=order.markaCode || "-";
+        detailHsCode.textContent=order.hsCode || "";
+        detailProductName.textContent=order.productName || "";
+        detailUnitVolume.textContent=order.unitVolume || "";
+        detailPackageType.textContent=order.packageType || "";
+        detailMarksQty.textContent=(order.marksQty||0).toLocaleString("uz-UZ");
+        detailMarkUnitValue.textContent=
+            order.markUnitValue!=null
+                ? order.markUnitValue.toLocaleString("uz-UZ",{minimumFractionDigits:2,maximumFractionDigits:2})+" so‘m"
                 : "-";
-        detailTotalExcise.textContent =
-            order.totalExciseValue != null
-                ? order.totalExciseValue.toLocaleString("uz-UZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " so‘m"
+        detailTotalExcise.textContent=
+            order.totalExciseValue!=null
+                ? order.totalExciseValue.toLocaleString("uz-UZ",{minimumFractionDigits:2,maximumFractionDigits:2})+" so‘m"
                 : "-";
-
-        const docNo = order.paymentDocNo || "-";
-        const docDate = order.paymentDocDate ? formatDate(order.paymentDocDate) : "-";
-        detailPaymentDoc.textContent = `${docNo} (${docDate})`;
-        detailPaymentAmount.textContent =
-            order.paymentAmount != null
-                ? order.paymentAmount.toLocaleString("uz-UZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " so‘m"
+        const docNo=order.paymentDocNo || "-";
+        const docDate=order.paymentDocDate?formatDate(order.paymentDocDate):"-";
+        detailPaymentDoc.textContent=`${docNo} (${docDate})`;
+        detailPaymentAmount.textContent=
+            order.paymentAmount!=null
+                ? order.paymentAmount.toLocaleString("uz-UZ",{minimumFractionDigits:2,maximumFractionDigits:2})+" so‘m"
                 : "-";
-        detailPaymentBank.textContent = order.paymentBank || "-";
+        detailPaymentBank.textContent=order.paymentBank || "-";
+        detailComment.textContent=order.comment || "Izoh kiritilmagan.";
 
-        detailComment.textContent = order.comment || "Izoh kiritilmagan.";
-
-        const signs = order.signatures || [];
-        if (!signs.length) {
-            detailSignaturesList.innerHTML = "Hozircha imzolar mavjud emas.";
-        } else {
-            detailSignaturesList.innerHTML = "";
-            signs.forEach((s) => {
-                const div = document.createElement("div");
-                div.className = "sign-item";
-                const roleTitle = ROLE_LABELS[s.role] || s.role;
-                div.innerHTML = `
+        const signs=order.signatures || [];
+        if(!signs.length){
+            detailSignaturesList.innerHTML="Hozircha imzolar mavjud emas.";
+        }else{
+            detailSignaturesList.innerHTML="";
+            signs.forEach(s=>{
+                const div=document.createElement("div");
+                div.className="sign-item";
+                const roleTitle=ROLE_LABELS[s.role] || s.role;
+                div.innerHTML=`
                     <div class="sign-role">${roleTitle}</div>
                     <div>${s.fio || "(F.I.Sh ko'rsatilmagan)"}</div>
                     <div class="sign-meta">${formatDateTime(s.signedAt)} – ${s.comment || "Izohsiz"}</div>
@@ -1723,86 +1639,78 @@ logoutBtnDropdown.addEventListener("click", doLogout);
                 detailSignaturesList.appendChild(div);
             });
         }
-
-        detailFooterMeta.textContent =
-            `Yaratilgan: ${formatDateTime(order.createdAt)}. Oxirgi o‘zgartirish: ${formatDateTime(order.updatedAt)}.`;
-
-        if (currentRole === "tadbirkor") {
+        detailFooterMeta.textContent=`Yaratilgan: ${formatDateTime(order.createdAt)}. Oxirgi o‘zgartirish: ${formatDateTime(order.updatedAt)}.`;
+        if(currentRole==="tadbirkor"){
             detailSignFormBlock.classList.add("hidden");
-        } else {
+        }else{
             detailSignFormBlock.classList.remove("hidden");
         }
-        detailSignFio.value = "";
-        detailSignComment.value = "";
-        detailSignMsg.textContent = "";
-        detailSignMsg.className = "muted";
-
+        detailSignFio.value="";
+        detailSignComment.value="";
+        detailSignMsg.textContent="";
+        detailSignMsg.className="muted";
         detailBackdrop.classList.remove("hidden");
     }
 
-    function closeOrderDetail() {
+    function closeOrderDetail(){
         detailBackdrop.classList.add("hidden");
-        currentDetailOrderId = null;
+        currentDetailOrderId=null;
     }
-
-    detailCloseBtn.addEventListener("click", closeOrderDetail);
-    detailCloseBtnBottom.addEventListener("click", closeOrderDetail);
-    detailBackdrop.addEventListener("click", (e) => {
-        if (e.target === detailBackdrop) {
-            closeOrderDetail();
-        }
+    detailCloseBtn.addEventListener("click",closeOrderDetail);
+    detailCloseBtnBottom.addEventListener("click",closeOrderDetail);
+    detailBackdrop.addEventListener("click",(e)=>{
+        if(e.target===detailBackdrop) closeOrderDetail();
     });
 
-    detailSignBtn.addEventListener("click", () => {
-        if (!currentDetailOrderId) return;
-        if (currentRole === "tadbirkor") {
-            detailSignMsg.textContent = "Imzolash faqat bojxona/bank rollari uchun.";
-            detailSignMsg.className = "error-msg";
+    detailSignBtn.addEventListener("click",()=>{
+        if(!currentDetailOrderId) return;
+        if(currentRole==="tadbirkor"){
+            detailSignMsg.textContent="Imzolash faqat bojxona/bank rollari uchun.";
+            detailSignMsg.className="error-msg";
             return;
         }
-
-        const fio = detailSignFio.value.trim();
-        const comment = detailSignComment.value.trim();
-
-        if (!fio) {
-            detailSignMsg.textContent = "F.I.Sh ni kiritish majburiy.";
-            detailSignMsg.className = "error-msg";
+        const fio=detailSignFio.value.trim();
+        const comment=detailSignComment.value.trim();
+        if(!fio){
+            detailSignMsg.textContent="F.I.Sh ni kiritish majburiy.";
+            detailSignMsg.className="error-msg";
             return;
         }
-
-        const idx = orders.findIndex((o) => o.id === currentDetailOrderId);
-        if (idx === -1) {
-            detailSignMsg.textContent = "Buyurtma topilmadi.";
-            detailSignMsg.className = "error-msg";
+        const idx=orders.findIndex(o=>o.id===currentDetailOrderId);
+        if(idx===-1){
+            detailSignMsg.textContent="Buyurtma topilmadi.";
+            detailSignMsg.className="error-msg";
             return;
         }
-
-        const order = orders[idx];
-        if (!Array.isArray(order.signatures)) {
-            order.signatures = [];
-        }
-
+        const order=orders[idx];
+        if(!Array.isArray(order.signatures)) order.signatures=[];
         order.signatures.push({
-            role: currentRole,
-            fio: fio,
-            comment: comment || null,
-            signedAt: nowIso()
+            role:currentRole,
+            fio:fio,
+            comment:comment || null,
+            signedAt:nowIso()
         });
-
-        order.updatedAt = nowIso();
+        order.updatedAt=nowIso();
         saveOrders(orders);
-
-        detailSignMsg.textContent = "Imzo muvaffaqiyatli qo‘yildi.";
-        detailSignMsg.className = "ok-msg";
-
+        detailSignMsg.textContent="Imzo muvaffaqiyatli qo‘yildi.";
+        detailSignMsg.className="ok-msg";
         renderOrdersForCurrent();
         openOrderDetail(order.id);
     });
 
-    // sahifa yuklanganda ma'lumotlar localStorage'dan yuklanadi,
-    // lekin foydalanuvchi login qilmaguncha ko'rsatilmaydi.
+    // badge dropdown
+    userBadge.addEventListener("click",(e)=>{
+        e.stopPropagation();
+        userDropdown.classList.toggle("hidden");
+    });
+    document.addEventListener("click",(e)=>{
+        if(userDropdown.classList.contains("hidden")) return;
+        const insideMenu=userDropdown.contains(e.target);
+        const onBadge=userBadge.contains(e.target);
+        if(!insideMenu && !onBadge){
+            userDropdown.classList.add("hidden");
+        }
+    });
 </script>
 </body>
 </html>
-
-
